@@ -20,11 +20,21 @@ window.onload= function(){
 
 }
 
-function calcular(){
-    console.log('calcular'+inicio+fim)
-
+function calcular(algo){
+    if(algo==undefined){
+        alert("Escolha o algoritmo")
+        return
+    }
+    if(inicio==undefined){
+        alert("Selecione o inicio")
+        return
+    }
+    if(fim==undefined){
+        alert("selecione o fim")
+        return
+    }
     var request = new XMLHttpRequest()
-    request.open('GET', '/calcula?inicio='+inicio+'&fim='+fim, true)
+    request.open('GET', '/calcula?algo='+algo+'&inicio='+inicio+'&fim='+fim, true)
     request.send()
     request.onload=(event)=>{
         document.getElementById('map').innerHTML=event.srcElement.response
