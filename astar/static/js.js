@@ -20,3 +20,13 @@ window.onload= function(){
 
 }
 
+function calcular(){
+    console.log('calcular'+inicio+fim)
+
+    var request = new XMLHttpRequest()
+    request.open('GET', '/calcula?inicio='+inicio+'&fim='+fim, true)
+    request.send()
+    request.onload=(event)=>{
+        document.getElementById('map').innerHTML=event.srcElement.response
+    }
+}
