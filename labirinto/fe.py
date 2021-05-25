@@ -43,18 +43,18 @@ def calculaCor(x,y,resultado=None,visitados=None):
         return "yellow"
 
 @app.route("/")
-def hello_world():
+def index():
     html = "<h1>Labirinto:</h1> \
         <script src='/static/js.js'></script>"
+    html += "<input type='button' value='Reset' onclick='location.reload()'></input>"
+    html += "<input type='button' value='Calcular BFS' onclick='calcular(\"bfs\")'></input>"
+    html += "<input type='button' value='Calcular DFS' onclick='calcular(\"dfs\")'></input>"
     html += "<div id='map' style='position: center'>"
     for y in range(len(map)):
         for x in range(len(map[0])):
             print(str(x)+" "+str(y)+" "+str(map[y][x]))
             html+="<div class='tile' id="+str(x)+"_"+str(y)+" style='position: absolute; top:"+ str(20*y+100) +"px; left: "+ str(20*x+100) +"px; width: 20px; height: 20px; background-color: "+("white","black")[map[y][x]==0]+"; border: 2px solid black'></div>"
-    html += "</div>"
-    html += "<input type='button' value='Reset' onclick='location.reload()'></input>"
-    html += "<input type='button' value='Calcular BFS' onclick='calcular(\"bfs\")'></input>"
-    html += "<input type='button' value='Calcular DFS' onclick='calcular(\"dfs\")'></input>"
+    html += "</div>"    
     return html
 
 @app.route("/calcula")
