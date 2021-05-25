@@ -29,8 +29,10 @@ for y in range(len(map)):
         if y > 0 and map[y-1][x]==1:
             grafo[str(x)+"_"+str(y)]+=[str(x)+"_"+str(y-1)]
 
-def calculaCor(x,y,resultado=None):
+def calculaCor(x,y,resultado=None,visitados=None):
     if resultado and (str(x)+"_"+str(y)) in resultado:
+        return "purple"
+    if visitados and (str(x)+"_"+str(y)) in visitados:
         return "yellow"
     n=map[y][x]
     if n == 0:
@@ -42,7 +44,7 @@ def calculaCor(x,y,resultado=None):
 
 @app.route("/")
 def hello_world():
-    html = "<p>Labirinto:</p> \
+    html = "<h1>Labirinto:</h1> \
         <script src='/static/js.js'></script>"
     html += "<div id='map' style='position: center'>"
     for y in range(len(map)):
@@ -50,6 +52,7 @@ def hello_world():
             print(str(x)+" "+str(y)+" "+str(map[y][x]))
             html+="<div class='tile' id="+str(x)+"_"+str(y)+" style='position: absolute; top:"+ str(20*y+100) +"px; left: "+ str(20*x+100) +"px; width: 20px; height: 20px; background-color: "+("white","black")[map[y][x]==0]+"; border: 2px solid black'></div>"
     html += "</div>"
+    html += "<input type='button' value='Reset' onclick='location.reload()'></input>"
     html += "<input type='button' value='Calcular BFS' onclick='calcular(\"bfs\")'></input>"
     html += "<input type='button' value='Calcular DFS' onclick='calcular(\"dfs\")'></input>"
     return html
@@ -60,15 +63,16 @@ def calcula():
     fim=request.args.get("fim")
     algo=request.args.get("algo")
     resultado = []
+    visitados = []
     if algo == "bfs":
-        resultado = grafos.bfs(grafo,inicio,fim)
+        resultado, visitados = grafos.bfs(grafo,inicio,fim)
     elif algo == "dfs":
-        resultado = grafos.dfs_iterativa(grafo,inicio,fim)
+        resultado, visitados = grafos.dfs_iterativa(grafo,inicio,fim)
 
     print("resultado")
     print(resultado)
     html = ""+algo+ " Inicio: " + inicio + " Fim: "+fim +" Resultado: "+str(resultado)
     for y in range(len(map)):
         for x in range(len(map[0])):
-            html+="<div class='tile' id="+str(x)+"_"+str(y)+" style='position: absolute; top:"+ str(20*y+100) +"px; left: "+ str(20*x+100) +"px; width: 20px; height: 20px; background-color: "+calculaCor(x,y,resultado)+"; border: 2px solid black'></div>"
+            html+="<div class='tile' id="+str(x)+"_"+str(y)+" style='position: absolute; top:"+ str(20*y+100) +"px; left: "+ str(20*x+100) +"px; width: 20px; height: 20px; background-color: "+calculaCor(x,y,resultado,visitados)+"; border: 2px solid black'></div>"
     return html
