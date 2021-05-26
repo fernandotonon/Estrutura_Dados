@@ -1,5 +1,6 @@
 from flask import Flask,request
 import grafos
+import astar
 
 app = Flask(__name__)
 
@@ -49,6 +50,7 @@ def index():
     html += "<input type='button' value='Reset' onclick='location.reload()'></input>"
     html += "<input type='button' value='Calcular BFS' onclick='calcular(\"bfs\")'></input>"
     html += "<input type='button' value='Calcular DFS' onclick='calcular(\"dfs\")'></input>"
+    html += "<input type='button' value='Calcular aStar' onclick='calcular(\"aStar\")'></input>"
     html += "<div id='map' style='position: center'>"
     for y in range(len(map)):
         for x in range(len(map[0])):
@@ -64,15 +66,24 @@ def calcula():
     algo=request.args.get("algo")
     resultado = []
     visitados = []
+    pInicio=(int(inicio.split("_")[0]),int(inicio.split("_")[1]))
+    pFim=(int(fim.split("_")[0]),int(fim.split("_")[1]))
+    nInicio = astar.Node(map[pInicio[1]][pInicio[0]],pInicio)
+    nFim = astar.Node(map[pFim[1]][pFim[0]],pFim)
+    print("passei aqui")
     if algo == "bfs":
         resultado, visitados = grafos.bfs(grafo,inicio,fim)
     elif algo == "dfs":
         resultado, visitados = grafos.dfs_iterativa(grafo,inicio,fim)
+    elif algo == "aStar":
+        resultado, visitados = astar.aStar(nInicio,nFim,map.copy())
+        resultado = [str(r.point[0])+"_"+str(r.point[1]) for r in resultado]
+        visitados = [str(r.point[0])+"_"+str(r.point[1]) for r in visitados]
 
     print("resultado")
     print(resultado)
-    html = ""+algo+ " Inicio: " + inicio + " Fim: "+fim +" Resultado: "+str(resultado)
+    html = ""+algo+ " Inicio: " + inicio + " Fim: "+ fim +" Tamanho caminho: "+str(len(resultado))  +" Visitados: "+str(len(visitados)) +" Resultado: "+str(resultado)
     for y in range(len(map)):
         for x in range(len(map[0])):
-            html+="<div class='tile' id="+str(x)+"_"+str(y)+" style='position: absolute; top:"+ str(20*y+100) +"px; left: "+ str(20*x+100) +"px; width: 20px; height: 20px; background-color: "+calculaCor(x,y,resultado,visitados)+"; border: 2px solid black'></div>"
+            html+="<div class='tile' id="+str(x)+"_"+str(y)+" style='position: absolute; top:"+ str(20*y+150) +"px; left: "+ str(20*x+100) +"px; width: 20px; height: 20px; background-color: "+calculaCor(x,y,resultado,visitados)+"; border: 2px solid black'></div>"
     return html

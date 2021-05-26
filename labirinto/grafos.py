@@ -1,25 +1,3 @@
-grafo = { "A" : ["B"],
-          "B" : ["C", "D"],
-          "C" : ["B", "E"],
-          "D" : ["A"],
-          "E" : ["B"]
-        }
-		
-print(grafo["A"])
-def dfs_recursiva(grafo, vertice, visitados,nivel):
-	visitados.add(vertice)
-	print(' '*nivel+vertice)
-	for vizinho in grafo[vertice]:
-		if vizinho not in visitados:
-			dfs_recursiva(grafo, vizinho, visitados, nivel+1)
-			
-def dfs(grafo, vertice):
-	visitados = set()
-	dfs_recursiva(grafo, vertice, visitados,0)
-	return visitados
-
-print(dfs(grafo, 'A'))
-
 def verificaVisitado(lista,valor):
 	for i in lista:
 		if i[0]==valor:
@@ -53,14 +31,12 @@ def dfs_iterativa(grafo, vertice_fonte, vertice_fim = None):
 	while falta_visitar:
 		vertice = falta_visitar.pop()
 		for vizinho in grafo[vertice]:
-			print("visitados: " + str(visitados))
 			if not verificaVisitado(visitados, vizinho):
 				visitados.append([vizinho,vertice])
 				falta_visitar.append(vizinho)
 			if vizinho==vertice_fim:
 				return reconstroiCaminho(visitados.copy()), listaVisitados(visitados)
-			print("falta visitar: " + str(falta_visitar))
-print(dfs_iterativa(grafo, 'A','E'))
+
 def bfs(grafo, vertice_fonte, vertice_fim = None):
 	visitados, fila = [], [vertice_fonte]
 	visitados.append([vertice_fonte,None])
@@ -73,5 +49,3 @@ def bfs(grafo, vertice_fonte, vertice_fim = None):
 				fila.append(vizinho)
 			if vizinho==vertice_fim:
 				return reconstroiCaminho(visitados.copy()), listaVisitados(visitados)
-
-print(bfs(grafo, 'A','E'))

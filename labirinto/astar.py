@@ -6,23 +6,29 @@ class Node:
         self.parent = None
         self.H = 0
         self.G = 0
-    def move_cost(self,other):
-        return 0 if self.value == '.' else 1
+    def move_cost(self,other = None):
+        return 1
+    def __str__(self):
+        return str(self.point)
+    def __eq__(self, other):
+        if (isinstance(other, Node)):
+            return self.point == other.point
+        return False
         
 def children(point,grid):
     x,y = point.point
-    links = [grid[d[0]][d[1]] for d in [(x-1, y),(x,y - 1),(x,y + 1),(x+1,y)]]
-    return [link for link in links if link.value != '%']
+    links = [Node(grid[d[1]][d[0]],d) for d in [(x-1, y),(x,y - 1),(x,y + 1),(x+1,y)]]
+    return [link for link in links if link.value != 0]
 def manhattan(point,point2):
     return abs(point.point[0] - point2.point[0]) + abs(point.point[1]-point2.point[0])
 def aStar(start, goal, grid):
     #The open and closed sets
-    openset = set()
-    closedset = set()
+    openset = []
+    closedset = []
     #Current point is the starting point
     current = start
     #Add the starting point to the open set
-    openset.add(current)
+    openset.append(current)
     #While the open set is not empty
     while openset:
         #Find the item in the open set with the lowest G + H score
@@ -34,11 +40,11 @@ def aStar(start, goal, grid):
                 path.append(current)
                 current = current.parent
             path.append(current)
-            return path[::-1]
+            return path[::-1], list(closedset)
         #Remove the item from the open set
         openset.remove(current)
         #Add it to the closed set
-        closedset.add(current)
+        closedset.append(current)
         #Loop through the node's children/siblings
         for node in children(current,grid):
             #If it is already in the closed set, skip it
@@ -59,18 +65,6 @@ def aStar(start, goal, grid):
                 #Set the parent to our current item
                 node.parent = current
                 #Add it to the set
-                openset.add(node)
-    #Throw an exception if there is no path
-    raise ValueError('No Path Found')
-def next_move(pacman,food,grid):
-    #Convert all the points to instances of Node
-    for x in range(len(grid)):
-        for y in range(len(grid[x])):
-            grid[x][y] = Node(grid[x][y],(x,y))
-    #Get the path
-    path = aStar(grid[pacman[0]][pacman[1]],grid[food[0]][food[1]],grid)
-    #Output the path
-    print (len(path) - 1)
-    for node in path:
-        x, y = node.point
-        print (x, y)
+                openset.append(node)
+    #retorna vazio se não encontra
+    return None
